@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.data.dao.DataTermDao">
+    
+	<sql id="dataTermColumns">
+		a.id AS "id",
+		a.hx_code AS "hxCode",
+		a.hx_name AS "hxName",
+		a.hx_password AS "hxPassword",
+		a.is_open AS "isOpen",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dataTermJoins">
+	</sql>
+    
+	<select id="get" resultType="DataTerm">
+		SELECT 
+			<include refid="dataTermColumns"/>
+		FROM data_term a
+		<include refid="dataTermJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DataTerm">
+		SELECT 
+			<include refid="dataTermColumns"/>
+		FROM data_term a
+		<include refid="dataTermJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="hxCode != null and hxCode != ''">
+				AND a.hx_code = #{hxCode}
+			</if>
+			<if test="hxName != null and hxName != ''">
+				AND a.hx_name = #{hxName}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DataTerm">
+		SELECT 
+			<include refid="dataTermColumns"/>
+		FROM data_term a
+		<include refid="dataTermJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO data_term(
+			id,
+			hx_code,
+			hx_name,
+			hx_password,
+			is_open,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{hxCode},
+			#{hxName},
+			#{hxPassword},
+			#{isOpen},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE data_term SET 	
+			hx_code = #{hxCode},
+			hx_name = #{hxName},
+			hx_password = #{hxPassword},
+			is_open = #{isOpen},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE data_term SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

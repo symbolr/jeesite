@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.data.dao.DataTransDao">
+    
+	<sql id="dataTransColumns">
+		a.id AS "id",
+		a.term_id AS "termId",
+		a.term_waste AS "termWaste",
+		a.batch_no AS "batchNo",
+		a.customer_no AS "customerNo",
+		a.customer_name AS "customerName",
+		a.customer_address AS "customerAddress",
+		a.business_type AS "businessType",
+		a.pay_type AS "payType",
+		a.settle_no AS "settleNo",
+		a.ewatch_no AS "ewatchNo",
+		a.trans_waste AS "transWaste",
+		a.trans_amount AS "transAmount",
+		a.trans_date AS "transDate",
+		a.trans_begintime AS "transBegintime",
+		a.trans_endtime AS "transEndtime",
+		a.trans_state AS "transState",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dataTransJoins">
+	</sql>
+    
+	<select id="get" resultType="DataTrans">
+		SELECT 
+			<include refid="dataTransColumns"/>
+		FROM data_trans a
+		<include refid="dataTransJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DataTrans">
+		SELECT 
+			<include refid="dataTransColumns"/>
+		FROM data_trans a
+		<include refid="dataTransJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="termWaste != null and termWaste != ''">
+				AND a.term_waste = #{termWaste}
+			</if>
+			<if test="customerName != null and customerName != ''">
+				AND a.customer_name = #{customerName}
+			</if>
+			<if test="customerAddress != null and customerAddress != ''">
+				AND a.customer_address = #{customerAddress}
+			</if>
+			<if test="businessType != null and businessType != ''">
+				AND a.business_type = #{businessType}
+			</if>
+			<if test="payType != null and payType != ''">
+				AND a.pay_type = #{payType}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DataTrans">
+		SELECT 
+			<include refid="dataTransColumns"/>
+		FROM data_trans a
+		<include refid="dataTransJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO data_trans(
+			id,
+			term_id,
+			term_waste,
+			batch_no,
+			customer_no,
+			customer_name,
+			customer_address,
+			business_type,
+			pay_type,
+			settle_no,
+			ewatch_no,
+			trans_waste,
+			trans_amount,
+			trans_date,
+			trans_begintime,
+			trans_endtime,
+			trans_state,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{termId},
+			#{termWaste},
+			#{batchNo},
+			#{customerNo},
+			#{customerName},
+			#{customerAddress},
+			#{businessType},
+			#{payType},
+			#{settleNo},
+			#{ewatchNo},
+			#{transWaste},
+			#{transAmount},
+			#{transDate},
+			#{transBegintime},
+			#{transEndtime},
+			#{transState},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE data_trans SET 	
+			term_id = #{termId},
+			term_waste = #{termWaste},
+			batch_no = #{batchNo},
+			customer_no = #{customerNo},
+			customer_name = #{customerName},
+			customer_address = #{customerAddress},
+			business_type = #{businessType},
+			pay_type = #{payType},
+			settle_no = #{settleNo},
+			ewatch_no = #{ewatchNo},
+			trans_waste = #{transWaste},
+			trans_amount = #{transAmount},
+			trans_date = #{transDate},
+			trans_begintime = #{transBegintime},
+			trans_endtime = #{transEndtime},
+			trans_state = #{transState},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE data_trans SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

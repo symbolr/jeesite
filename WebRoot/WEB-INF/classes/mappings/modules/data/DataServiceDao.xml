@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.data.dao.DataServiceDao">
+    
+	<sql id="dataServiceColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.phone AS "phone",
+		a.status AS "status",
+		a.image_path AS "imagePath",
+		a.term_id AS "termId",
+		a.worker_id AS "workerId",
+		a.area AS "area",
+		a.time_zone AS "timeZone",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dataServiceJoins">
+	</sql>
+    
+	<select id="get" resultType="DataService">
+		SELECT 
+			<include refid="dataServiceColumns"/>
+		FROM data_service a
+		<include refid="dataServiceJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DataService">
+		SELECT 
+			<include refid="dataServiceColumns"/>
+		FROM data_service a
+		<include refid="dataServiceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="phone != null and phone != ''">
+				AND a.phone = #{phone}
+			</if>
+			<if test="workerId != null and workerId != ''">
+				AND a.worker_id = #{workerId}
+			</if>
+			<if test="area != null and area != ''">
+				AND a.area = #{area}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DataService">
+		SELECT 
+			<include refid="dataServiceColumns"/>
+		FROM data_service a
+		<include refid="dataServiceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO data_service(
+			id,
+			name,
+			phone,
+			status,
+			image_path,
+			term_id,
+			worker_id,
+			area,
+			time_zone,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{phone},
+			#{status},
+			#{imagePath},
+			#{termId},
+			#{workerId},
+			#{area},
+			#{timeZone},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE data_service SET 	
+			name = #{name},
+			phone = #{phone},
+			status = #{status},
+			image_path = #{imagePath},
+			term_id = #{termId},
+			worker_id = #{workerId},
+			area = #{area},
+			time_zone = #{timeZone},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE data_service SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

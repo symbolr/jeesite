@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.data.dao.DataAccountDao">
+    
+	<sql id="dataAccountColumns">
+		a.id AS "id",
+		a.customer_no AS "customerNo",
+		a.customer_name AS "customerName",
+		a.customer_unit AS "customerUnit",
+		a.customer_address AS "customerAddress",
+		a.settle_no AS "settleNo",
+		a.ewatch_no AS "ewatchNo",
+		a.ewatch_adress AS "ewatchAdress",
+		a.balance AS "balance",
+		a.last_banlance AS "lastBanlance",
+		a.due_pay AS "duePay",
+		a.total_penal AS "totalPenal",
+		a.total_energe AS "totalEnerge",
+		a.is_allpay AS "isAllpay",
+		a.card_mark AS "cardMark",
+		a.max_charge AS "maxCharge",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dataAccountJoins">
+	</sql>
+    
+	<select id="get" resultType="DataAccount">
+		SELECT 
+			<include refid="dataAccountColumns"/>
+		FROM data_account a
+		<include refid="dataAccountJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DataAccount">
+		SELECT 
+			<include refid="dataAccountColumns"/>
+		FROM data_account a
+		<include refid="dataAccountJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="customerName != null and customerName != ''">
+				AND a.customer_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{customerName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{customerName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{customerName},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DataAccount">
+		SELECT 
+			<include refid="dataAccountColumns"/>
+		FROM data_account a
+		<include refid="dataAccountJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO data_account(
+			id,
+			customer_no,
+			customer_name,
+			customer_unit,
+			customer_address,
+			settle_no,
+			ewatch_no,
+			ewatch_adress,
+			balance,
+			last_banlance,
+			due_pay,
+			total_penal,
+			total_energe,
+			is_allpay,
+			card_mark,
+			max_charge,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{customerNo},
+			#{customerName},
+			#{customerUnit},
+			#{customerAddress},
+			#{settleNo},
+			#{ewatchNo},
+			#{ewatchAdress},
+			#{balance},
+			#{lastBanlance},
+			#{duePay},
+			#{totalPenal},
+			#{totalEnerge},
+			#{isAllpay},
+			#{cardMark},
+			#{maxCharge},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE data_account SET 	
+			customer_no = #{customerNo},
+			customer_name = #{customerName},
+			customer_unit = #{customerUnit},
+			customer_address = #{customerAddress},
+			settle_no = #{settleNo},
+			ewatch_no = #{ewatchNo},
+			ewatch_adress = #{ewatchAdress},
+			balance = #{balance},
+			last_banlance = #{lastBanlance},
+			due_pay = #{duePay},
+			total_penal = #{totalPenal},
+			total_energe = #{totalEnerge},
+			is_allpay = #{isAllpay},
+			card_mark = #{cardMark},
+			max_charge = #{maxCharge},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE data_account SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

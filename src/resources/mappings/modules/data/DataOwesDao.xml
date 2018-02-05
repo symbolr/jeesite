@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.data.dao.DataOwesDao">
+    
+	<sql id="dataOwesColumns">
+		a.id AS "id",
+		a.fee_month AS "feeMonth",
+		a.fee_energy AS "feeEnergy",
+		a.ewatch_no AS "ewatchNo",
+		a.monetary AS "monetary",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dataOwesJoins">
+	</sql>
+    
+	<select id="get" resultType="DataOwes">
+		SELECT 
+			<include refid="dataOwesColumns"/>
+		FROM data_owes a
+		<include refid="dataOwesJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DataOwes">
+		SELECT 
+			<include refid="dataOwesColumns"/>
+		FROM data_owes a
+		<include refid="dataOwesJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="feeMonth != null and feeMonth != ''">
+				AND a.fee_month = #{feeMonth}
+			</if>
+			<if test="ewatchNo != null and ewatchNo != ''">
+				AND a.ewatch_no = #{ewatchNo}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DataOwes">
+		SELECT 
+			<include refid="dataOwesColumns"/>
+		FROM data_owes a
+		<include refid="dataOwesJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO data_owes(
+			id,
+			fee_month,
+			fee_energy,
+			ewatch_no,
+			monetary,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{feeMonth},
+			#{feeEnergy},
+			#{ewatchNo},
+			#{monetary},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE data_owes SET 	
+			fee_month = #{feeMonth},
+			fee_energy = #{feeEnergy},
+			ewatch_no = #{ewatchNo},
+			monetary = #{monetary},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE data_owes SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.data.dao.DataSyslogDao">
+    
+	<sql id="dataSyslogColumns">
+		a.id AS "id",
+		a.term_id AS "termId",
+		a.term_type AS "termType",
+		a.file AS "file",
+		a.sys_date AS "sysDate",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dataSyslogJoins">
+	</sql>
+    
+	<select id="get" resultType="DataSyslog">
+		SELECT 
+			<include refid="dataSyslogColumns"/>
+		FROM data_syslog a
+		<include refid="dataSyslogJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DataSyslog">
+		SELECT 
+			<include refid="dataSyslogColumns"/>
+		FROM data_syslog a
+		<include refid="dataSyslogJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="termId != null and termId != ''">
+				AND a.term_id = #{termId}
+			</if>
+			<if test="termType != null and termType != ''">
+				AND a.term_type = #{termType}
+			</if>
+			<if test="sysDate != null and sysDate != ''">
+				AND a.sys_date = #{sysDate}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DataSyslog">
+		SELECT 
+			<include refid="dataSyslogColumns"/>
+		FROM data_syslog a
+		<include refid="dataSyslogJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO data_syslog(
+			id,
+			term_id,
+			term_type,
+			file,
+			sys_date,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{termId},
+			#{termType},
+			#{file},
+			#{sysDate},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE data_syslog SET 	
+			term_id = #{termId},
+			term_type = #{termType},
+			file = #{file},
+			sys_date = #{sysDate},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE data_syslog SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
